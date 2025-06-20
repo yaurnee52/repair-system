@@ -1,4 +1,4 @@
-package com.repairshop;
+package com.repairshop.controller;
 
 import javax.mvc.security.Csrf;
 import javax.ws.rs.ApplicationPath;

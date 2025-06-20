@@ -12,7 +12,7 @@ public class ClientDAO {
 
     // Создать нового клиента
     public void create(Client client) throws SQLException {
-        String sql = "INSERT INTO client (company_name) VALUES (?)";
+        String sql = "INSERT INTO Client (companyName) VALUES (?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, client.getCompanyName());
             stmt.executeUpdate();
@@ -21,12 +21,12 @@ public class ClientDAO {
 
     // Получить клиента по id
     public Client read(int id) throws SQLException {
-        String sql = "SELECT * FROM client WHERE id = ?";
+        String sql = "SELECT * FROM Client WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return new Client(rs.getInt("id"), rs.getString("company_name"));
+                return new Client(rs.getInt("id"), rs.getString("companyName"));
             }
         }
         return null;
@@ -35,11 +35,11 @@ public class ClientDAO {
     // Получить список всех клиентов
     public List<Client> readAll() throws SQLException {
         List<Client> clients = new ArrayList<>();
-        String sql = "SELECT * FROM client";
+        String sql = "SELECT * FROM Client";
         try (Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery(sql);
             while (rs.next()) {
-                clients.add(new Client(rs.getInt("id"), rs.getString("company_name")));
+                clients.add(new Client(rs.getInt("id"), rs.getString("companyName")));
             }
         }
         return clients;
@@ -47,7 +47,7 @@ public class ClientDAO {
 
     // Обновить данные клиента
     public void update(Client client) throws SQLException {
-        String sql = "UPDATE client SET company_name = ? WHERE id = ?";
+        String sql = "UPDATE Client SET companyName = ? WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, client.getCompanyName());
             stmt.setInt(2, client.getId());
@@ -57,7 +57,7 @@ public class ClientDAO {
 
     // Удалить клиента по id
     public void delete(int id) throws SQLException {
-        String sql = "DELETE FROM client WHERE id = ?";
+        String sql = "DELETE FROM Client WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
@@ -67,12 +67,12 @@ public class ClientDAO {
     // Найти клиентов по части названия компании
     public List<Client> findByCompanyName(String name) throws SQLException {
         List<Client> clients = new ArrayList<>();
-        String sql = "SELECT * FROM client WHERE company_name LIKE ?";
+        String sql = "SELECT * FROM Client WHERE companyName LIKE ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, "%" + name + "%");
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                clients.add(new Client(rs.getInt("id"), rs.getString("company_name")));
+                clients.add(new Client(rs.getInt("id"), rs.getString("companyName")));
             }
         }
         return clients;
