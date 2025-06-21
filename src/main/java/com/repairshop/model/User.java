@@ -4,7 +4,7 @@ public class User {
     private int id;
     private String username;
     private String passwordHash;
-    private int roleId;
+    private int roleId; // связь с Role
     private Integer clientId; // Может быть null
 
     public User() {}

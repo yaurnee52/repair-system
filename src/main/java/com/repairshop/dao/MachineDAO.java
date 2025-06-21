@@ -1,6 +1,6 @@
 package com.repairshop.dao;
 
-import com.repairshop.db.DatabaseConnection;
+import com.repairshop.ConectDB.DatabaseConnection;
 import com.repairshop.model.Machine;
 
 import java.sql.*;

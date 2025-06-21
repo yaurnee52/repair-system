@@ -1,4 +1,4 @@
-package com.repairshop.db;
+package com.repairshop.ConectDB;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
