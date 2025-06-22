@@ -4,22 +4,23 @@ import com.repairshop.dao.ClientDAO;
 import com.repairshop.dao.UserDAO;
 import com.repairshop.model.Client;
 import com.repairshop.model.User;
-import com.repairshop.view.ClientProfilePanelView;
+import com.repairshop.view.ClientDashboardView;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Parent;
+
 
 public class ClientProfilePanelController {
-    private final ClientProfilePanelView view = new ClientProfilePanelView();
+    private final ClientDashboardView view;
     private User currentUser;
     private Client currentClient;
     private final ClientDAO clientDAO = new ClientDAO();
     private final UserDAO userDAO = new UserDAO();
 
-    public ClientProfilePanelController(User user) {
+    public ClientProfilePanelController(User user, ClientDashboardView view) {
         this.currentUser = user;
+        this.view = view;
         loadData();
-        view.saveButton.setOnAction(new EventHandler<ActionEvent>() {
+        view.profile_saveButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 handleSave();
@@ -28,15 +29,15 @@ public class ClientProfilePanelController {
     }
 
     private void loadData() {
-        view.usernameField.setText(currentUser.getUsername());
+        view.profile_usernameField.setText(currentUser.getUsername());
         if (currentUser.getClientId() != null) {
             try {
                 currentClient = clientDAO.read(currentUser.getClientId());
                 if (currentClient != null) {
-                    view.companyNameField.setText(currentClient.getCompanyName());
+                    view.profile_companyNameField.setText(currentClient.getCompanyName());
                 }
             } catch (Exception e) {
-                view.infoLabel.setText("Ошибка загрузки данных компании.");
+                view.profile_infoLabel.setText("Ошибка загрузки данных компании.");
                 e.printStackTrace();
             }
         }
@@ -44,9 +45,8 @@ public class ClientProfilePanelController {
 
     private void handleSave() {
         try {
-            // Обновление данных клиента (компании)
-            String companyName = view.companyNameField.getText();
-            if (currentClient == null) { // Если клиент еще не создан
+            String companyName = view.profile_companyNameField.getText();
+            if (currentClient == null) {
                 if (!companyName.isEmpty()) {
                     Client newClient = new Client();
                     newClient.setCompanyName(companyName);
@@ -55,28 +55,23 @@ public class ClientProfilePanelController {
                     currentClient = newClient;
                     currentClient.setId(newClientId);
                 }
-            } else { // Если клиент уже есть, обновляем
+            } else {
                 currentClient.setCompanyName(companyName);
                 clientDAO.update(currentClient);
             }
 
-            // Обновление данных пользователя
-            currentUser.setUsername(view.usernameField.getText());
-            String newPassword = view.passwordField.getText();
+            currentUser.setUsername(view.profile_usernameField.getText());
+            String newPassword = view.profile_passwordField.getText();
             if (newPassword != null && !newPassword.isEmpty()) {
                 currentUser.setPasswordHash(newPassword);
             }
             userDAO.update(currentUser);
 
-            view.infoLabel.setText("Данные успешно сохранены!");
+            view.profile_infoLabel.setText("Данные успешно сохранены!");
 
         } catch (Exception e) {
-            view.infoLabel.setText("Ошибка сохранения: " + e.getMessage());
+            view.profile_infoLabel.setText("Ошибка сохранения: " + e.getMessage());
             e.printStackTrace();
         }
-    }
-
-    public Parent getView() {
-        return view.getView();
     }
 } 

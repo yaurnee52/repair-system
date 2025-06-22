@@ -7,7 +7,6 @@ import com.repairshop.view.ClientDashboardView;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
-import javafx.scene.control.Label;
 
 public class ClientDashboardController {
     private final ClientDashboardView view = new ClientDashboardView();
@@ -48,23 +47,23 @@ public class ClientDashboardController {
     }
 
     private void showMainPanel() {
-        RepairRequestPanelController repairController = new RepairRequestPanelController(currentUser);
-        view.contentPane.getChildren().setAll(repairController.getView());
+        RepairRequestPanelController repairController = new RepairRequestPanelController(currentUser, view);
+        view.contentPane.getChildren().setAll(view.getRepairRequestPane());
     }
 
     private void showMyMachinesPanel() {
-        MyMachinesPanelController machinesController = new MyMachinesPanelController(currentUser, this);
-        view.contentPane.getChildren().setAll(machinesController.getView());
+        MyMachinesPanelController machinesController = new MyMachinesPanelController(currentUser, view);
+        view.contentPane.getChildren().setAll(view.getMyMachinesPane());
     }
 
     public void showRepairRequestPanel(Machine machine) {
-        RepairRequestPanelController repairController = new RepairRequestPanelController(currentUser, machine);
-        view.contentPane.getChildren().setAll(repairController.getView());
+        RepairRequestPanelController repairController = new RepairRequestPanelController(currentUser, machine, view);
+        view.contentPane.getChildren().setAll(view.getRepairRequestPane());
     }
 
     private void showProfilePanel() {
-        ClientProfilePanelController profileController = new ClientProfilePanelController(currentUser);
-        view.contentPane.getChildren().setAll(profileController.getView());
+        ClientProfilePanelController profileController = new ClientProfilePanelController(currentUser, view);
+        view.contentPane.getChildren().setAll(view.getProfilePane());
     }
 
     private void handleLogout() {

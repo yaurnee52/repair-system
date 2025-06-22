@@ -1,59 +1,48 @@
 package com.repairshop.controller;
 
-import com.repairshop.dao.MachineDAO;
-import com.repairshop.dao.MachineModelDAO;
-import com.repairshop.dao.RepairDAO;
-import com.repairshop.dao.RepairTypeDAO;
-import com.repairshop.model.Machine;
-import com.repairshop.model.MachineModel;
-import com.repairshop.model.Repair;
-import com.repairshop.model.RepairType;
-import com.repairshop.model.User;
-import com.repairshop.view.MyMachinesPanelView;
 import com.repairshop.containers.MachineModels;
 import com.repairshop.containers.RepairTypes;
+import com.repairshop.dao.MachineDAO;
+import com.repairshop.dao.RepairDAO;
+import com.repairshop.model.*;
+import com.repairshop.view.ClientDashboardView;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.scene.Parent;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class MyMachinesPanelController {
 
-    private final MyMachinesPanelView view;
+    private final ClientDashboardView view;
     private final User currentUser;
-    private final ClientDashboardController dashboardController;
 
     private final MachineDAO machineDAO = new MachineDAO();
-    private final MachineModelDAO machineModelDAO = new MachineModelDAO();
     private final RepairDAO repairDAO = new RepairDAO();
-    private final RepairTypeDAO repairTypeDAO = new RepairTypeDAO();
 
-    private Map<Integer, MachineModel> machineModelMap;
-    private Map<Integer, RepairType> repairTypeMap;
+    // Карта для быстрого доступа к данным станков без лишних запросов к БД
+    private final Map<Integer, Machine> clientMachinesMap = new HashMap<>();
 
-    public MyMachinesPanelController(User user, ClientDashboardController dashboardController) {
+    public MyMachinesPanelController(User user, ClientDashboardView view) {
         this.currentUser = user;
-        this.dashboardController = dashboardController;
-        this.view = new MyMachinesPanelView();
+        this.view = view;
         initialize();
     }
 
     private void initialize() {
-        setupTables(); // Сначала настраиваем таблицы
-        loadData(); // Потом загружаем в них данные
-        setupListeners();
+        setupTables();
+        loadData();
     }
 
     private void setupTables() {
-        // --- Таблица станков ---
+        // --- Таблица станков (остается без изменений) ---
         TableColumn<Machine, Integer> idCol = new TableColumn<>("ID станка");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         idCol.setSortable(false);
@@ -70,11 +59,13 @@ public class MyMachinesPanelController {
         countryCol.setCellValueFactory(new PropertyValueFactoryForMachine("country"));
         countryCol.setSortable(false);
 
-        view.machinesTable.getColumns().clear();
-        view.machinesTable.getColumns().addAll(idCol, brandCol, yearCol, countryCol);
+        view.machines_table.getColumns().setAll(idCol, brandCol, yearCol, countryCol);
 
+        // --- Таблица ремонтов (добавляем колонку "Станок") ---
+        TableColumn<Repair, String> machineRepairCol = new TableColumn<>("Станок");
+        machineRepairCol.setCellValueFactory(new PropertyValueFactoryForRepair("machine"));
+        machineRepairCol.setSortable(false);
 
-        // --- Таблица ремонтов ---
         TableColumn<Repair, String> dateCol = new TableColumn<>("Дата начала");
         dateCol.setCellValueFactory(new PropertyValueFactoryForRepair("date"));
         dateCol.setSortable(false);
@@ -87,47 +78,29 @@ public class MyMachinesPanelController {
         costCol.setCellValueFactory(new PropertyValueFactoryForRepair("cost"));
         costCol.setSortable(false);
 
-        view.repairsTable.getColumns().clear();
-        view.repairsTable.getColumns().addAll(dateCol, repairNameCol, costCol);
+        view.machines_repairsTable.getColumns().setAll(machineRepairCol, dateCol, repairNameCol, costCol);
     }
 
     private void loadData() {
         try {
-            if(currentUser.getClientId() != null){
+            if (currentUser.getClientId() != null) {
+                // 1. Загружаем станки клиента
                 List<Machine> machines = machineDAO.readByClientId(currentUser.getClientId());
-                view.machinesTable.setItems(FXCollections.observableArrayList(machines));
-            }
+                view.machines_table.setItems(FXCollections.observableArrayList(machines));
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void setupListeners() {
-        view.machinesTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Machine>() {
-            @Override
-            public void changed(ObservableValue<? extends Machine> observable, Machine oldValue, Machine newValue) {
-                if (newValue != null) {
-                    loadRepairsForMachine(newValue);
-                } else {
-                    view.repairsTable.getItems().clear();
+                // 2. Сохраняем станки в карту для быстрого доступа
+                clientMachinesMap.clear();
+                for (Machine m : machines) {
+                    clientMachinesMap.put(m.getId(), m);
                 }
-            }
-        });
-    }
 
-    private void loadRepairsForMachine(Machine machine) {
-        try {
-            List<Repair> repairs = repairDAO.readByMachineId(machine.getId());
-            view.repairsTable.setItems(FXCollections.observableArrayList(repairs));
+                // 3. Загружаем ВСЮ историю ремонтов для клиента
+                List<Repair> repairs = repairDAO.findByClientId(currentUser.getClientId());
+                view.machines_repairsTable.setItems(FXCollections.observableArrayList(repairs));
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            view.repairsTable.getItems().clear();
         }
-    }
-
-    public Parent getView() {
-        return view.getView();
     }
 
     // Вспомогательный внутренний класс для таблицы станков
@@ -155,18 +128,34 @@ public class MyMachinesPanelController {
         @Override
         public ObservableValue<String> call(TableColumn.CellDataFeatures<Repair, String> data) {
             Repair repair = data.getValue();
-            RepairType type = RepairTypes.getInstance().getRepairTypeById(repair.getRepairTypeId());
             String value = "";
-            if ("date".equals(property)) {
+
+            if ("machine".equals(property)) {
+                Machine machine = clientMachinesMap.get(repair.getMachineId());
+                if (machine != null) {
+                    MachineModel model = MachineModels.getInstance().getModelById(machine.getMachineModelId());
+                    if (model != null) {
+                        value = model.toString();
+                    }
+                }
+                 if(value.isEmpty()) {
+                    value = "Станок ID: " + repair.getMachineId();
+                }
+            }
+            else if ("date".equals(property)) {
                 Date date = repair.getStartDate();
                 if (date != null) {
                     value = new SimpleDateFormat("dd.MM.yyyy").format(date);
                 }
-            } else if (type != null) {
-                if ("name".equals(property)) value = type.getName();
-                if ("cost".equals(property)) value = String.valueOf(type.getCost());
+            } else if (repair.getRepairTypeId() != 0) {
+                RepairType type = RepairTypes.getInstance().getRepairTypeById(repair.getRepairTypeId());
+                if (type != null) {
+                    if ("name".equals(property)) value = type.getName();
+                    if ("cost".equals(property)) value = String.valueOf(type.getCost());
+                }
             }
             return new SimpleStringProperty(value);
         }
     }
 } 
+ 

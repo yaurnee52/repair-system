@@ -46,6 +46,25 @@ public class MachineModelDAO {
         return models;
     }
 
+    // Получить все модели станков по ID клиента
+    public List<MachineModel> readByClientId(int clientId) throws SQLException {
+        List<MachineModel> models = new ArrayList<>();
+        String sql = "SELECT DISTINCT mm.* FROM MachineModel mm JOIN Machine m ON mm.id = m.machineModelId WHERE m.clientId = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, clientId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                models.add(new MachineModel(
+                    rs.getInt("id"),
+                    rs.getString("brand"),
+                    rs.getInt("yearOfRelease"),
+                    rs.getString("countryOfManufacture")
+                ));
+            }
+        }
+        return models;
+    }
+
 
     public MachineModel findOrCreate(String brand, int year, String country) throws SQLException {
         // Сначала ищем существующую модель

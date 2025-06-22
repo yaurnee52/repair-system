@@ -76,8 +76,8 @@ public class MachineDAO {
             while (rs.next()) {
                 machines.add(new Machine(
                         rs.getInt("id"),
-                        rs.getInt("machineModelId"),
-                        rs.getInt("clientId")
+                        rs.getInt("clientId"),
+                        rs.getInt("machineModelId")
                 ));
             }
         }
