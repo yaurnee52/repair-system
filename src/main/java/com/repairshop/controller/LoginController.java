@@ -1,11 +1,11 @@
 package com.repairshop.controller;
 
 import com.repairshop.MainApp;
-import com.repairshop.dao.RoleDAO;
 import com.repairshop.dao.UserDAO;
 import com.repairshop.model.Role;
 import com.repairshop.model.User;
 import com.repairshop.view.LoginView;
+import com.repairshop.containers.Roles;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -99,8 +99,7 @@ public class LoginController {
                 return;
             }
 
-            RoleDAO roleDAO = new RoleDAO();
-            Role selectedRole = roleDAO.readByName(roleName);
+            Role selectedRole = Roles.getInstance().getRoleByName(roleName);
 
             if (user.getPasswordHash().equals(password) && selectedRole != null && user.getRoleId() == selectedRole.getId()) {
                 if ("Клиент".equals(roleName)) {
@@ -148,8 +147,7 @@ public class LoginController {
                 return;
             }
             // Получаем id роли по названию
-            RoleDAO roleDAO = new RoleDAO();
-            Role role = roleDAO.readByName(roleName);
+            Role role = Roles.getInstance().getRoleByName(roleName);
             if (role == null) {
                 view.regErrorLabel.setText("Ошибка: выбранная роль не найдена!");
                 return;

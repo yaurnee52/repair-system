@@ -10,15 +10,7 @@ import java.util.List;
 public class RoleDAO {
     private final Connection conn = DatabaseConnection.getInstance().getConnection();
 
-    // Создать новую роль
-    public void create(Role role) throws SQLException {
-        String sql = "INSERT INTO Role (roleName) VALUES (?)";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, role.getRoleName());
-            stmt.executeUpdate();
-        }
-    }
-
+    
     // Получить роль по id
     public Role read(int id) throws SQLException {
         String sql = "SELECT * FROM Role WHERE id = ?";
@@ -56,24 +48,5 @@ public class RoleDAO {
             }
         }
         return roles;
-    }
-
-    // Обновить роль
-    public void update(Role role) throws SQLException {
-        String sql = "UPDATE Role SET roleName = ? WHERE id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, role.getRoleName());
-            stmt.setInt(2, role.getId());
-            stmt.executeUpdate();
-        }
-    }
-
-    // Удалить роль
-    public void delete(int id) throws SQLException {
-        String sql = "DELETE FROM Role WHERE id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            stmt.executeUpdate();
-        }
     }
 }

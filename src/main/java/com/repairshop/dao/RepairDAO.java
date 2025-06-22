@@ -70,21 +70,12 @@ public class RepairDAO {
         }
     }
 
-    // Удалить ремонт по id
-    public void delete(int id) throws SQLException {
-        String sql = "DELETE FROM Repair WHERE id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            stmt.executeUpdate();
-        }
-    }
 
-    // Получить все ремонты по id машины
-    public List<Repair> findByMachineId(int machineId) throws SQLException {
+    public List<Repair> findByClientId(int clientId) throws SQLException {
         List<Repair> repairs = new ArrayList<>();
-        String sql = "SELECT * FROM Repair WHERE machineId = ?";
+        String sql = "SELECT r.* FROM Repair r JOIN Machine m ON r.machineId = m.id WHERE m.clientId = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, machineId);
+            stmt.setInt(1, clientId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 repairs.add(new Repair(
@@ -98,25 +89,6 @@ public class RepairDAO {
         return repairs;
     }
 
-    // Получить ремонты за определенный период
-    public List<Repair> findByDateRange(Date from, Date to) throws SQLException {
-        List<Repair> repairs = new ArrayList<>();
-        String sql = "SELECT * FROM Repair WHERE startDate BETWEEN ? AND ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setDate(1, new java.sql.Date(from.getTime()));
-            stmt.setDate(2, new java.sql.Date(to.getTime()));
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                repairs.add(new Repair(
-                    rs.getInt("id"),
-                    rs.getDate("startDate"),
-                    rs.getInt("machineId"),
-                    rs.getInt("repairTypeId")
-                ));
-            }
-        }
-        return repairs;
-    }
 
     public List<Repair> readByMachineId(int machineId) throws SQLException {
         List<Repair> repairs = new ArrayList<>();

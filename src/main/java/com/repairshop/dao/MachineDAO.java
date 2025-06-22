@@ -65,16 +65,8 @@ public class MachineDAO {
         }
     }
 
-    // Удалить машину по id
-    public void delete(int id) throws SQLException {
-        String sql = "DELETE FROM Machine WHERE id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            stmt.executeUpdate();
-        }
-    }
 
-    // Получить все машины определенного клиента
+    // Получить все станки определенного клиента
     public List<Machine> readByClientId(int clientId) throws SQLException {
         List<Machine> machines = new ArrayList<>();
         String sql = "SELECT * FROM Machine WHERE clientId = ?";

@@ -81,17 +81,4 @@ public class ClientDAO {
         }
     }
 
-    // Найти клиентов по части названия компании
-    public List<Client> findByCompanyName(String name) throws SQLException {
-        List<Client> clients = new ArrayList<>();
-        String sql = "SELECT * FROM Client WHERE companyName LIKE ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, "%" + name + "%");
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                clients.add(new Client(rs.getInt("id"), rs.getString("companyName")));
-            }
-        }
-        return clients;
-    }
 }

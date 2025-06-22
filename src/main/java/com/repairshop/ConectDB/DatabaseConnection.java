@@ -28,8 +28,6 @@ public class DatabaseConnection {
             this.connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
 
         } catch (IOException | SQLException e) {
-            // Если произошла любая ошибка (файл не прочитался или не удалось подключиться),
-            // приложение аварийно завершится с понятным сообщением.
             throw new RuntimeException("Критическая ошибка: Не удалось подключиться к базе данных.", e);
         }
     }

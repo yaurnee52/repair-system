@@ -3,6 +3,8 @@ package com.repairshop.controller;
 import com.repairshop.dao.*;
 import com.repairshop.model.*;
 import com.repairshop.view.RepairRequestPanelView;
+import com.repairshop.containers.MachineModels;
+import com.repairshop.containers.RepairTypes;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -27,8 +29,6 @@ public class RepairRequestPanelController {
     private Machine preselectedMachine;
 
     private final MachineDAO machineDAO = new MachineDAO();
-    private final MachineModelDAO machineModelDAO = new MachineModelDAO();
-    private final RepairTypeDAO repairTypeDAO = new RepairTypeDAO();
     private final RepairDAO repairDAO = new RepairDAO();
 
     private Map<Integer, MachineModel> machineModelMap = new HashMap<>();
@@ -57,12 +57,6 @@ public class RepairRequestPanelController {
 
     private void loadData() {
         try {
-            // Загрузка моделей для кэша
-            List<MachineModel> machineModels = machineModelDAO.readAll();
-            for(MachineModel model : machineModels) {
-                machineModelMap.put(model.getId(), model);
-            }
-
             // Загрузка станков клиента
             if(currentUser.getClientId() != null){
                 List<Machine> clientMachines = machineDAO.readByClientId(currentUser.getClientId());
@@ -73,7 +67,7 @@ public class RepairRequestPanelController {
 
 
             // Загрузка видов ремонта
-            List<RepairType> repairTypes = repairTypeDAO.readAll();
+            List<RepairType> repairTypes = RepairTypes.getInstance().getAllRepairTypes();
             view.repairTypeComboBox.setItems(FXCollections.observableArrayList(repairTypes));
 
             // Фабрика для кастомного отображения станков в ComboBox
@@ -87,7 +81,7 @@ public class RepairRequestPanelController {
                             if (empty || item == null) {
                                 setText(null);
                             } else {
-                                MachineModel model = machineModelMap.get(item.getMachineModelId());
+                                MachineModel model = MachineModels.getInstance().getModelById(item.getMachineModelId());
                                 setText(model != null ? model.toString() + " (ID станка: " + item.getId() + ")" : "Станок ID: " + item.getId());
                             }
                         }
@@ -147,7 +141,7 @@ public class RepairRequestPanelController {
                 }
                 int year = Integer.parseInt(yearText);
 
-                MachineModel model = machineModelDAO.findOrCreate(brand, year, country);
+                MachineModel model = MachineModels.getInstance().findOrCreate(brand, year, country);
 
                 Machine newMachine = new Machine();
                 newMachine.setClientId(currentUser.getClientId());

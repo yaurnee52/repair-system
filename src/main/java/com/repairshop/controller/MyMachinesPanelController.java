@@ -10,19 +10,18 @@ import com.repairshop.model.Repair;
 import com.repairshop.model.RepairType;
 import com.repairshop.model.User;
 import com.repairshop.view.MyMachinesPanelView;
+import com.repairshop.containers.MachineModels;
+import com.repairshop.containers.RepairTypes;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -94,18 +93,6 @@ public class MyMachinesPanelController {
 
     private void loadData() {
         try {
-            machineModelMap = new HashMap<>();
-            List<MachineModel> models = machineModelDAO.readAll();
-            for (MachineModel model : models) {
-                machineModelMap.put(model.getId(), model);
-            }
-
-            repairTypeMap = new HashMap<>();
-            List<RepairType> types = repairTypeDAO.readAll();
-            for (RepairType type : types) {
-                repairTypeMap.put(type.getId(), type);
-            }
-
             if(currentUser.getClientId() != null){
                 List<Machine> machines = machineDAO.readByClientId(currentUser.getClientId());
                 view.machinesTable.setItems(FXCollections.observableArrayList(machines));
@@ -150,7 +137,7 @@ public class MyMachinesPanelController {
         @Override
         public ObservableValue<String> call(TableColumn.CellDataFeatures<Machine, String> data) {
             Machine machine = data.getValue();
-            MachineModel model = machineModelMap.get(machine.getMachineModelId());
+            MachineModel model = MachineModels.getInstance().getModelById(machine.getMachineModelId());
             String value = "";
             if (model != null) {
                 if ("brand".equals(property)) value = model.getBrand();
@@ -168,7 +155,7 @@ public class MyMachinesPanelController {
         @Override
         public ObservableValue<String> call(TableColumn.CellDataFeatures<Repair, String> data) {
             Repair repair = data.getValue();
-            RepairType type = repairTypeMap.get(repair.getRepairTypeId());
+            RepairType type = RepairTypes.getInstance().getRepairTypeById(repair.getRepairTypeId());
             String value = "";
             if ("date".equals(property)) {
                 Date date = repair.getStartDate();
