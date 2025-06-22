@@ -18,7 +18,8 @@ CREATE TABLE MachineModel (
     id INT AUTO_INCREMENT PRIMARY KEY,
     brand VARCHAR(100) NOT NULL,       
     yearOfRelease YEAR,               
-    countryOfManufacture VARCHAR(100)    
+    countryOfManufacture VARCHAR(100),
+    UNIQUE KEY `unique_model` (`brand`,`yearOfRelease`,`countryOfManufacture`)
 );
 
 CREATE TABLE RepairType (

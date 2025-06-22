@@ -8,8 +8,8 @@ import javafx.stage.Stage;
 
 public class MainApp extends Application {
 
-    private static final int WINDOW_WIDTH = 600;
-    private static final int WINDOW_HEIGHT = 600;
+    private static final int WINDOW_WIDTH = 900;
+    private static final int WINDOW_HEIGHT = 900;
     private static final String INITIAL_WINDOW_TITLE = "Ремонт станков";
     private static Stage primaryStage;
 

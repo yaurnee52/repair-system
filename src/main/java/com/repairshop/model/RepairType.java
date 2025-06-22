@@ -49,11 +49,6 @@ public class RepairType {
 
     @Override
     public String toString() {
-        return "RepairType{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", cost=" + cost +
-                ", durationDays=" + durationDays +
-                '}';
+        return name + " (" + cost + " руб., " + durationDays + " дн.)";
     }
 }

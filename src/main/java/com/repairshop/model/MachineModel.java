@@ -3,12 +3,12 @@ package com.repairshop.model;
 public class MachineModel {
     private int id;
     private String brand;
-    private short yearOfRelease;
+    private int yearOfRelease;
     private String countryOfManufacture;
 
     public MachineModel() {}
 
-    public MachineModel(int id, String brand, short yearOfRelease, String countryOfManufacture) {
+    public MachineModel(int id, String brand, int yearOfRelease, String countryOfManufacture) {
         this.id = id;
         this.brand = brand;
         this.yearOfRelease = yearOfRelease;
@@ -31,11 +31,11 @@ public class MachineModel {
         this.brand = brand;
     }
 
-    public short getYearOfRelease() {
+    public int getYearOfRelease() {
         return yearOfRelease;
     }
 
-    public void setYearOfRelease(short yearOfRelease) {
+    public void setYearOfRelease(int yearOfRelease) {
         this.yearOfRelease = yearOfRelease;
     }
 
@@ -49,11 +49,6 @@ public class MachineModel {
 
     @Override
     public String toString() {
-        return "MachineModel{" +
-                "id=" + id +
-                ", brand='" + brand + '\'' +
-                ", yearOfRelease=" + yearOfRelease +
-                ", countryOfManufacture='" + countryOfManufacture + '\'' +
-                '}';
+        return brand + " (" + countryOfManufacture + ", " + yearOfRelease + ")";
     }
 }

@@ -117,4 +117,22 @@ public class RepairDAO {
         }
         return repairs;
     }
+
+    public List<Repair> readByMachineId(int machineId) throws SQLException {
+        List<Repair> repairs = new ArrayList<>();
+        String sql = "SELECT * FROM Repair WHERE machineId = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, machineId);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                repairs.add(new Repair(
+                        rs.getInt("id"),
+                        rs.getDate("startDate"),
+                        rs.getInt("machineId"),
+                        rs.getInt("repairTypeId")
+                ));
+            }
+        }
+        return repairs;
+    }
 }

@@ -103,8 +103,13 @@ public class LoginController {
             Role selectedRole = roleDAO.readByName(roleName);
 
             if (user.getPasswordHash().equals(password) && selectedRole != null && user.getRoleId() == selectedRole.getId()) {
-                DashboardController dashboardController = new DashboardController(user);
-                MainApp.setRoot(dashboardController.getView(), "Личный кабинет: " + user.getUsername());
+                if ("Клиент".equals(roleName)) {
+                    ClientDashboardController dashboardController = new ClientDashboardController(user);
+                    MainApp.setRoot(dashboardController.getView(), "Личный кабинет клиента: " + user.getUsername());
+                } else { // Для Администратора
+                    DashboardController dashboardController = new DashboardController(user);
+                    MainApp.setRoot(dashboardController.getView(), "Панель администратора: " + user.getUsername());
+                }
             } else {
                 view.errorLabel.setText("Неверный логин, пароль или роль");
             }

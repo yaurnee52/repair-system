@@ -15,7 +15,7 @@ public class MachineModelDAO {
         String sql = "INSERT INTO MachineModel (brand, yearOfRelease, countryOfManufacture) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, model.getBrand());
-            stmt.setShort(2, model.getYearOfRelease());
+            stmt.setInt(2, model.getYearOfRelease());
             stmt.setString(3, model.getCountryOfManufacture());
             stmt.executeUpdate();
         }
@@ -31,7 +31,7 @@ public class MachineModelDAO {
                 return new MachineModel(
                     rs.getInt("id"),
                     rs.getString("brand"),
-                    rs.getShort("yearOfRelease"),
+                    rs.getInt("yearOfRelease"),
                     rs.getString("countryOfManufacture")
                 );
             }
@@ -49,7 +49,7 @@ public class MachineModelDAO {
                 models.add(new MachineModel(
                     rs.getInt("id"),
                     rs.getString("brand"),
-                    rs.getShort("yearOfRelease"),
+                    rs.getInt("yearOfRelease"),
                     rs.getString("countryOfManufacture")
                 ));
             }
@@ -62,7 +62,7 @@ public class MachineModelDAO {
         String sql = "UPDATE MachineModel SET brand = ?, yearOfRelease = ?, countryOfManufacture = ? WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, model.getBrand());
-            stmt.setShort(2, model.getYearOfRelease());
+            stmt.setInt(2, model.getYearOfRelease());
             stmt.setString(3, model.getCountryOfManufacture());
             stmt.setInt(4, model.getId());
             stmt.executeUpdate();
@@ -89,11 +89,48 @@ public class MachineModelDAO {
                 models.add(new MachineModel(
                     rs.getInt("id"),
                     rs.getString("brand"),
-                    rs.getShort("yearOfRelease"),
+                    rs.getInt("yearOfRelease"),
                     rs.getString("countryOfManufacture")
                 ));
             }
         }
         return models;
+    }
+
+    public MachineModel findOrCreate(String brand, int year, String country) throws SQLException {
+        // Сначала ищем существующую модель
+        String selectSql = "SELECT * FROM MachineModel WHERE brand = ? AND yearOfRelease = ? AND countryOfManufacture = ?";
+        try (PreparedStatement selectStmt = conn.prepareStatement(selectSql)) {
+            selectStmt.setString(1, brand);
+            selectStmt.setInt(2, year);
+            selectStmt.setString(3, country);
+            ResultSet rs = selectStmt.executeQuery();
+            if (rs.next()) {
+                return new MachineModel(
+                        rs.getInt("id"),
+                        rs.getString("brand"),
+                        rs.getInt("yearOfRelease"),
+                        rs.getString("countryOfManufacture")
+                );
+            }
+        }
+
+        // Если не нашли, создаем новую
+        String insertSql = "INSERT INTO MachineModel (brand, yearOfRelease, countryOfManufacture) VALUES (?, ?, ?)";
+        try (PreparedStatement insertStmt = conn.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
+            insertStmt.setString(1, brand);
+            insertStmt.setInt(2, year);
+            insertStmt.setString(3, country);
+            insertStmt.executeUpdate();
+
+            try (ResultSet generatedKeys = insertStmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int newId = generatedKeys.getInt(1);
+                    return new MachineModel(newId, brand, year, country);
+                }
+            }
+        }
+
+        return null; // Если что-то пошло не так
     }
 }

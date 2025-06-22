@@ -86,17 +86,17 @@ public class UserDAO {
     // Обновить пользователя
     public void update(User user) throws SQLException {
         String sql = "UPDATE Users SET username = ?, passwordHash = ?, roleId = ?, clientId = ? WHERE id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, user.getUsername());
-            stmt.setString(2, user.getPasswordHash());
-            stmt.setInt(3, user.getRoleId());
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, user.getUsername());
+            pstmt.setString(2, user.getPasswordHash());
+            pstmt.setInt(3, user.getRoleId());
             if (user.getClientId() != null) {
-                stmt.setInt(4, user.getClientId());
+                pstmt.setInt(4, user.getClientId());
             } else {
-                stmt.setNull(4, Types.INTEGER);
+                pstmt.setNull(4, java.sql.Types.INTEGER);
             }
-            stmt.setInt(5, user.getId());
-            stmt.executeUpdate();
+            pstmt.setInt(5, user.getId());
+            pstmt.executeUpdate();
         }
     }
 
