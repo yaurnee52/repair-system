@@ -2,7 +2,7 @@ package com.repairshop.dao;
 
 import com.repairshop.ConectDB.DatabaseConnection;
 import com.repairshop.model.Client;
-
+import com.repairshop.model.Machine;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -81,4 +81,32 @@ public class ClientDAO {
         }
     }
 
+    public void performCascadeDelete(int clientId, int userId) throws SQLException {
+        MachineDAO machineDAO = new MachineDAO();
+        RepairDAO repairDAO = new RepairDAO();
+        UserDAO userDAO = new UserDAO();
+
+        List<Machine> machinesToDelete = machineDAO.readByClientId(clientId);
+        try {
+            conn.setAutoCommit(false);
+
+            for (Machine machine : machinesToDelete) {
+                repairDAO.deleteByMachineId(machine.getId());
+            }
+
+            if (!machinesToDelete.isEmpty()) {
+                machineDAO.deleteByClientId(clientId);
+            }
+
+            userDAO.delete(userId);
+            this.delete(clientId);
+
+            conn.commit();
+        } catch (SQLException e) {
+            conn.rollback();
+            throw new SQLException("Ошибка каскадного удаления. Транзакция отменена.", e);
+        } finally {
+            conn.setAutoCommit(true);
+        }
+    }
 }

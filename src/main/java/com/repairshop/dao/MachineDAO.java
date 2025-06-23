@@ -28,19 +28,6 @@ public class MachineDAO {
         return newId;
     }
 
-    // Получить машину по id
-    public Machine read(int id) throws SQLException {
-        String sql = "SELECT * FROM Machine WHERE id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return new Machine(rs.getInt("id"), rs.getInt("clientId"), rs.getInt("machineModelId"));
-            }
-        }
-        return null;
-    }
-
     // Получить список всех машин
     public List<Machine> readAll() throws SQLException {
         List<Machine> machines = new ArrayList<>();
@@ -54,17 +41,13 @@ public class MachineDAO {
         return machines;
     }
 
-    // Обновить данные машины
-    public void update(Machine machine) throws SQLException {
-        String sql = "UPDATE Machine SET clientId = ?, machineModelId = ? WHERE id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, machine.getClientId());
-            stmt.setInt(2, machine.getMachineModelId());
-            stmt.setInt(3, machine.getId());
-            stmt.executeUpdate();
+    public void deleteByClientId(int clientId) throws SQLException {
+        String sql = "DELETE FROM Machine WHERE clientId = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, clientId);
+            pstmt.executeUpdate();
         }
     }
-
 
     // Получить все станки определенного клиента
     public List<Machine> readByClientId(int clientId) throws SQLException {

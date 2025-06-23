@@ -26,25 +26,6 @@ public class UserDAO {
         }
     }
 
-    // Получить пользователя по id
-    public User read(int id) throws SQLException {
-        String sql = "SELECT * FROM Users WHERE id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return new User(
-                    rs.getInt("id"),
-                    rs.getString("username"),
-                    rs.getString("passwordHash"),
-                    rs.getInt("roleId"),
-                    rs.getObject("clientId") != null ? rs.getInt("clientId") : null
-                );
-            }
-        }
-        return null;
-    }
-
     // Получить пользователя по username
     public User readByUsername(String username) throws SQLException {
         String sql = "SELECT * FROM Users WHERE username = ?";

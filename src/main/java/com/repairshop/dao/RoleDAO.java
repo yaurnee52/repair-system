@@ -10,20 +10,6 @@ import java.util.List;
 public class RoleDAO {
     private final Connection conn = DatabaseConnection.getInstance().getConnection();
 
-    
-    // Получить роль по id
-    public Role read(int id) throws SQLException {
-        String sql = "SELECT * FROM Role WHERE id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return new Role(rs.getInt("id"), rs.getString("roleName"));
-            }
-        }
-        return null;
-    }
-
     // Получить роль по имени
     public Role readByName(String roleName) throws SQLException {
         String sql = "SELECT * FROM Role WHERE roleName = ?";
