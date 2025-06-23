@@ -30,12 +30,12 @@ public class RepairTypes {
         }
     }
 
-    public List<RepairType> getAllRepairTypes() {
+    public List<RepairType> readAll() {
         loadCache();
         return repairTypesCache;
     }
 
-    public RepairType getRepairTypeById(int id) {
+    public RepairType readById(int id) {
         loadCache();
         for (RepairType type : repairTypesCache) {
             if (type.getId() == id) {

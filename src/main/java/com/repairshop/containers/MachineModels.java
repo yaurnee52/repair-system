@@ -35,7 +35,7 @@ public class MachineModels {
         this.machineModelsCache = null;
     }
 
-    public MachineModel getModelById(int id) {
+    public MachineModel readById(int id) {
         loadCache();
         for (MachineModel model : machineModelsCache) {
             if (model.getId() == id) {

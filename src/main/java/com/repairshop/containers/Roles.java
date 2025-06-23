@@ -30,7 +30,7 @@ public class Roles {
         }
     }
 
-    public Role getRoleByName(String name) {
+    public Role readByName(String name) {
         loadCache();
         for (Role role : rolesCache) {
             if (role.getRoleName().equals(name)) {
