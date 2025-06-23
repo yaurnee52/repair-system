@@ -1,13 +1,13 @@
 package com.repairshop.controller;
 
 import com.repairshop.containers.MachineModels;
+import com.repairshop.containers.Machines;
 import com.repairshop.containers.RepairTypes;
 import com.repairshop.dao.MachineDAO;
 import com.repairshop.dao.RepairDAO;
 import com.repairshop.model.*;
 import com.repairshop.view.ClientDashboardView;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.scene.control.TableColumn;
@@ -15,9 +15,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MyMachinesPanelController {
 
@@ -26,9 +24,6 @@ public class MyMachinesPanelController {
 
     private final MachineDAO machineDAO = new MachineDAO();
     private final RepairDAO repairDAO = new RepairDAO();
-
-    // Карта для быстрого доступа к данным станков без лишних запросов к БД
-    private final Map<Integer, Machine> clientMachinesMap = new HashMap<>();
 
     public MyMachinesPanelController(User user, ClientDashboardView view) {
         this.currentUser = user;
@@ -42,7 +37,7 @@ public class MyMachinesPanelController {
     }
 
     private void setupTables() {
-        // --- Таблица станков (остается без изменений) ---
+        // --- Таблица станков ---
         TableColumn<Machine, Integer> idCol = new TableColumn<>("ID станка");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         idCol.setSortable(false);
@@ -84,17 +79,11 @@ public class MyMachinesPanelController {
     private void loadData() {
         try {
             if (currentUser.getClientId() != null) {
-                // 1. Загружаем станки клиента
-                List<Machine> machines = machineDAO.readByClientId(currentUser.getClientId());
+                // 1. Загружаем станки клиента из нового контейнера
+                List<Machine> machines = Machines.getInstance().readByClientId(currentUser.getClientId());
                 view.machines_table.setItems(FXCollections.observableArrayList(machines));
 
-                // 2. Сохраняем станки в карту для быстрого доступа
-                clientMachinesMap.clear();
-                for (Machine m : machines) {
-                    clientMachinesMap.put(m.getId(), m);
-                }
-
-                // 3. Загружаем ВСЮ историю ремонтов для клиента
+                // 2. Загружаем ВСЮ историю ремонтов для клиента
                 List<Repair> repairs = repairDAO.findByClientId(currentUser.getClientId());
                 view.machines_repairsTable.setItems(FXCollections.observableArrayList(repairs));
             }
@@ -110,7 +99,7 @@ public class MyMachinesPanelController {
         @Override
         public ObservableValue<String> call(TableColumn.CellDataFeatures<Machine, String> data) {
             Machine machine = data.getValue();
-            MachineModel model = MachineModels.getInstance().getModelById(machine.getMachineModelId());
+            MachineModel model = MachineModels.getInstance().readById(machine.getMachineModelId());
             String value = "";
             if (model != null) {
                 if ("brand".equals(property)) value = model.getBrand();
@@ -131,9 +120,9 @@ public class MyMachinesPanelController {
             String value = "";
 
             if ("machine".equals(property)) {
-                Machine machine = clientMachinesMap.get(repair.getMachineId());
+                Machine machine = Machines.getInstance().readById(repair.getMachineId());
                 if (machine != null) {
-                    MachineModel model = MachineModels.getInstance().getModelById(machine.getMachineModelId());
+                    MachineModel model = MachineModels.getInstance().readById(machine.getMachineModelId());
                     if (model != null) {
                         value = model.toString();
                     }
@@ -148,7 +137,7 @@ public class MyMachinesPanelController {
                     value = new SimpleDateFormat("dd.MM.yyyy").format(date);
                 }
             } else if (repair.getRepairTypeId() != 0) {
-                RepairType type = RepairTypes.getInstance().getRepairTypeById(repair.getRepairTypeId());
+                RepairType type = RepairTypes.getInstance().readById(repair.getRepairTypeId());
                 if (type != null) {
                     if ("name".equals(property)) value = type.getName();
                     if ("cost".equals(property)) value = String.valueOf(type.getCost());

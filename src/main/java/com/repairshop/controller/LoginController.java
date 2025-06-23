@@ -1,6 +1,7 @@
 package com.repairshop.controller;
 
 import com.repairshop.MainApp;
+
 import com.repairshop.dao.UserDAO;
 import com.repairshop.model.Role;
 import com.repairshop.model.User;
@@ -99,14 +100,14 @@ public class LoginController {
                 return;
             }
 
-            Role selectedRole = Roles.getInstance().getRoleByName(roleName);
+            Role selectedRole = Roles.getInstance().readByName(roleName);
 
             if (user.getPasswordHash().equals(password) && selectedRole != null && user.getRoleId() == selectedRole.getId()) {
                 if ("Клиент".equals(roleName)) {
                     ClientDashboardController dashboardController = new ClientDashboardController(user);
                     MainApp.setRoot(dashboardController.getView(), "Личный кабинет клиента: " + user.getUsername());
                 } else { // Для Администратора
-                    DashboardController dashboardController = new DashboardController(user);
+                    AdminDashboardController dashboardController = new AdminDashboardController(user);
                     MainApp.setRoot(dashboardController.getView(), "Панель администратора: " + user.getUsername());
                 }
             } else {
@@ -147,7 +148,7 @@ public class LoginController {
                 return;
             }
             // Получаем id роли по названию
-            Role role = Roles.getInstance().getRoleByName(roleName);
+            Role role = Roles.getInstance().readByName(roleName);
             if (role == null) {
                 view.regErrorLabel.setText("Ошибка: выбранная роль не найдена!");
                 return;
