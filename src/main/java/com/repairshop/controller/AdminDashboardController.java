@@ -3,6 +3,8 @@ package com.repairshop.controller;
 import com.repairshop.MainApp;
 import com.repairshop.model.User;
 import com.repairshop.view.AdminDashboardView;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Parent;
 
 public class AdminDashboardController {
@@ -14,9 +16,24 @@ public class AdminDashboardController {
     }
 
     private void setupActions() {
-        view.reportsButton.setOnAction(event -> showReportsPanel());
-        view.clientManagementButton.setOnAction(event -> showClientManagementPanel());
-        view.logoutButton.setOnAction(event -> handleLogout());
+        view.reportsButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                showReportsPanel();
+            }
+        });
+        view.clientManagementButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                showClientManagementPanel();
+            }
+        });
+        view.logoutButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                handleLogout();
+            }
+        });
     }
 
     private void showReportsPanel() {

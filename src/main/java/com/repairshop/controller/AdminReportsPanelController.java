@@ -9,9 +9,13 @@ import com.repairshop.model.RepairType;
 import com.repairshop.view.AdminDashboardView;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Callback;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -29,7 +33,12 @@ public class AdminReportsPanelController {
     private void initialize() {
         setupTables();
         loadData();
-        view.reports_searchButton.setOnAction(event -> handleSearch());
+        view.reports_searchButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                handleSearch();
+            }
+        });
     }
 
     private void loadData() {
@@ -49,35 +58,52 @@ public class AdminReportsPanelController {
 
     private void setupRepairTable(javafx.scene.control.TableView<Repair> table) {
         TableColumn<Repair, Integer> clientIdCol = new TableColumn<>("ID Клиента");
-        clientIdCol.setCellValueFactory(cellData -> {
-            Repair repair = cellData.getValue();
-            Machine machine = Machines.getInstance().readById(repair.getMachineId());
-            return new SimpleObjectProperty<>(machine != null ? machine.getClientId() : null);
+        clientIdCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Repair, Integer>, ObservableValue<Integer>>() {
+            @Override
+            public ObservableValue<Integer> call(TableColumn.CellDataFeatures<Repair, Integer> param) {
+                Repair repair = param.getValue();
+                Machine machine = Machines.getInstance().readById(repair.getMachineId());
+                return new SimpleObjectProperty<>(machine != null ? machine.getClientId() : null);
+            }
         });
 
         TableColumn<Repair, Integer> machineIdCol = new TableColumn<>("ID Станка");
         machineIdCol.setCellValueFactory(new PropertyValueFactory<>("machineId"));
 
         TableColumn<Repair, String> repairNameCol = new TableColumn<>("Название ремонта");
-        repairNameCol.setCellValueFactory(cellData -> {
-            RepairType type = RepairTypes.getInstance().readById(cellData.getValue().getRepairTypeId());
-            return new SimpleStringProperty(type != null ? type.getName() : "N/A");
+        repairNameCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Repair, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Repair, String> param) {
+                RepairType type = RepairTypes.getInstance().readById(param.getValue().getRepairTypeId());
+                return new SimpleStringProperty(type != null ? type.getName() : "N/A");
+            }
         });
 
         TableColumn<Repair, Double> costCol = new TableColumn<>("Стоимость");
-        costCol.setCellValueFactory(cellData -> {
-            RepairType type = RepairTypes.getInstance().readById(cellData.getValue().getRepairTypeId());
-            return new SimpleObjectProperty<>(type != null ? type.getCost() : 0.0);
+        costCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Repair, Double>, ObservableValue<Double>>() {
+            @Override
+            public ObservableValue<Double> call(TableColumn.CellDataFeatures<Repair, Double> param) {
+                RepairType type = RepairTypes.getInstance().readById(param.getValue().getRepairTypeId());
+                return new SimpleObjectProperty<>(type != null ? type.getCost() : 0.0);
+            }
         });
         
         TableColumn<Repair, Integer> durationCol = new TableColumn<>("Длительность");
-        durationCol.setCellValueFactory(cellData -> {
-            RepairType type = RepairTypes.getInstance().readById(cellData.getValue().getRepairTypeId());
-            return new SimpleObjectProperty<>(type != null ? type.getDurationDays() : 0);
+        durationCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Repair, Integer>, ObservableValue<Integer>>() {
+            @Override
+            public ObservableValue<Integer> call(TableColumn.CellDataFeatures<Repair, Integer> param) {
+                RepairType type = RepairTypes.getInstance().readById(param.getValue().getRepairTypeId());
+                return new SimpleObjectProperty<>(type != null ? type.getDurationDays() : 0);
+            }
         });
 
         TableColumn<Repair, String> dateCol = new TableColumn<>("Дата начала");
-        dateCol.setCellValueFactory(cellData -> new SimpleStringProperty(new SimpleDateFormat("dd.MM.yyyy").format(cellData.getValue().getStartDate())));
+        dateCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Repair, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Repair, String> param) {
+                return new SimpleStringProperty(new SimpleDateFormat("dd.MM.yyyy").format(param.getValue().getStartDate()));
+            }
+        });
 
         table.getColumns().setAll(clientIdCol, machineIdCol, repairNameCol, costCol, durationCol, dateCol);
     }

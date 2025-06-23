@@ -8,9 +8,13 @@ import com.repairshop.model.Role;
 import com.repairshop.model.User;
 import com.repairshop.view.AdminDashboardView;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Callback;
 
 import java.util.List;
 import java.util.Map;
@@ -30,7 +34,12 @@ public class AdminPanelController {
     private void initialize() {
         setupTable();
         loadClientData();
-        view.clients_deleteButton.setOnAction(event -> handleDelete());
+        view.clients_deleteButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                handleDelete();
+            }
+        });
     }
 
     private void loadClientData() {
@@ -60,10 +69,13 @@ public class AdminPanelController {
         clientIdCol.setCellValueFactory(new PropertyValueFactory<>("clientId"));
 
         TableColumn<User, String> companyCol = new TableColumn<>("Название компании");
-        companyCol.setCellValueFactory(cellData -> {
-            User user = cellData.getValue();
-            Client client = clientCache.get(user.getClientId());
-            return new SimpleStringProperty(client != null ? client.getCompanyName() : "N/A");
+        companyCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<User, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<User, String> param) {
+                User user = param.getValue();
+                Client client = clientCache.get(user.getClientId());
+                return new SimpleStringProperty(client != null ? client.getCompanyName() : "N/A");
+            }
         });
 
         TableColumn<User, String> loginCol = new TableColumn<>("Логин");

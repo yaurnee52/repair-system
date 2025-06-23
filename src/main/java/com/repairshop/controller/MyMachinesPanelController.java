@@ -12,6 +12,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Callback;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -93,7 +94,7 @@ public class MyMachinesPanelController {
     }
 
     // Вспомогательный внутренний класс для таблицы станков
-    private class PropertyValueFactoryForMachine implements javafx.util.Callback<TableColumn.CellDataFeatures<Machine, String>, ObservableValue<String>> {
+    private class PropertyValueFactoryForMachine implements Callback<TableColumn.CellDataFeatures<Machine, String>, ObservableValue<String>> {
         private final String property;
         public PropertyValueFactoryForMachine(String property) { this.property = property; }
         @Override
@@ -111,7 +112,7 @@ public class MyMachinesPanelController {
     }
 
     // Вспомогательный внутренний класс для таблицы ремонтов
-    private class PropertyValueFactoryForRepair implements javafx.util.Callback<TableColumn.CellDataFeatures<Repair, String>, ObservableValue<String>> {
+    private class PropertyValueFactoryForRepair implements Callback<TableColumn.CellDataFeatures<Repair, String>, ObservableValue<String>> {
         private final String property;
         public PropertyValueFactoryForRepair(String property) { this.property = property; }
         @Override
