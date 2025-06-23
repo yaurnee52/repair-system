@@ -6,7 +6,7 @@ import com.repairshop.dao.UserDAO;
 import com.repairshop.model.Client;
 import com.repairshop.model.Role;
 import com.repairshop.model.User;
-import com.repairshop.view.DashboardView;
+import com.repairshop.view.AdminDashboardView;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.scene.control.TableColumn;
@@ -17,12 +17,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class AdminPanelController {
-    private final DashboardView view;
+    private final AdminDashboardView view;
     private final UserDAO userDAO = new UserDAO();
     private final ClientDAO clientDAO = new ClientDAO();
     private Map<Integer, Client> clientCache;
 
-    public AdminPanelController(DashboardView view) {
+    public AdminPanelController(AdminDashboardView view) {
         this.view = view;
         initialize();
     }

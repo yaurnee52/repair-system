@@ -8,7 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
-public class DashboardView {
+public class AdminDashboardView {
     private final BorderPane root = new BorderPane();
     public final StackPane contentPane = new StackPane();
 
@@ -33,7 +33,7 @@ public class DashboardView {
     public Button clients_deleteButton;
     public Label clients_infoLabel;
 
-    public DashboardView() {
+    public AdminDashboardView() {
         this.reportsPane = createReportsPane();
         this.clientManagementPane = createClientManagementPane();
 
@@ -55,7 +55,7 @@ public class DashboardView {
         searchBox.setAlignment(Pos.CENTER_LEFT);
         reports_searchField = new TextField();
         reports_searchField.setPromptText("Введите ID клиента");
-        reports_searchButton = new Button("Найти");
+        reports_searchButton = new Button("Поиск");
         reports_searchInfoLabel = new Label();
         searchBox.getChildren().addAll(new Label("Поиск по клиенту:"), reports_searchField, reports_searchButton);
         reports_clientRepairsTable = new TableView<>();

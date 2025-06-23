@@ -2,11 +2,11 @@ package com.repairshop.controller;
 
 import com.repairshop.MainApp;
 import com.repairshop.model.User;
-import com.repairshop.view.DashboardView;
+import com.repairshop.view.AdminDashboardView;
 import javafx.scene.Parent;
 
 public class AdminDashboardController {
-    private final DashboardView view = new DashboardView();
+    private final AdminDashboardView view = new AdminDashboardView();
 
     public AdminDashboardController(User user) {
         setupActions();

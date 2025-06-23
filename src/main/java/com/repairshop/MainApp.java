@@ -5,10 +5,10 @@ import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
+//Главный класс для запуска программы, создает окно и запускает контроллер логина
 public class MainApp extends Application {
 
-    private static final int WINDOW_WIDTH = 900;
+    private static final int WINDOW_WIDTH = 1100;
     private static final int WINDOW_HEIGHT = 900;
     private static final String INITIAL_WINDOW_TITLE = "Ремонт станков";
     private static Stage primaryStage;
@@ -27,7 +27,7 @@ public class MainApp extends Application {
         primaryStage.setHeight(WINDOW_HEIGHT);
         primaryStage.show();
     }
-
+// Позволяет из любого места программы полностью сменить содержимое главного окна
     public static void setRoot(Parent root, String title) {
         primaryStage.getScene().setRoot(root);
         primaryStage.setTitle(title);

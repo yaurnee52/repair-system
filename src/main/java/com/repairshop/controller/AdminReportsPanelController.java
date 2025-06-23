@@ -2,12 +2,11 @@ package com.repairshop.controller;
 
 import com.repairshop.containers.Machines;
 import com.repairshop.containers.RepairTypes;
-import com.repairshop.dao.MachineDAO;
 import com.repairshop.dao.RepairDAO;
 import com.repairshop.model.Machine;
 import com.repairshop.model.Repair;
 import com.repairshop.model.RepairType;
-import com.repairshop.view.DashboardView;
+import com.repairshop.view.AdminDashboardView;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -19,10 +18,10 @@ import java.util.List;
 
 
 public class AdminReportsPanelController {
-    private final DashboardView view;
+    private final AdminDashboardView view;
     private final RepairDAO repairDAO = new RepairDAO();
 
-    public AdminReportsPanelController(DashboardView view) {
+    public AdminReportsPanelController(AdminDashboardView view) {
         this.view = view;
         initialize();
     }
