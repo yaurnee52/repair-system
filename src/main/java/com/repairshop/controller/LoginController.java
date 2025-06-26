@@ -113,9 +113,9 @@ public class LoginController {
             } else {
                 view.errorLabel.setText("Неверный логин, пароль или роль");
             }
-        } catch (Exception ex) {
-            view.errorLabel.setText("Ошибка авторизации: " + ex.getMessage());
-            ex.printStackTrace();
+        } catch (Exception e) {
+            view.errorLabel.setText("Ошибка авторизации: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

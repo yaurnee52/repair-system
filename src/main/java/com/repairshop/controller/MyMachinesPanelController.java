@@ -3,7 +3,6 @@ package com.repairshop.controller;
 import com.repairshop.containers.MachineModels;
 import com.repairshop.containers.Machines;
 import com.repairshop.containers.RepairTypes;
-import com.repairshop.dao.MachineDAO;
 import com.repairshop.dao.RepairDAO;
 import com.repairshop.model.*;
 import com.repairshop.view.ClientDashboardView;
@@ -23,7 +22,6 @@ public class MyMachinesPanelController {
     private final ClientDashboardView view;
     private final User currentUser;
 
-    private final MachineDAO machineDAO = new MachineDAO();
     private final RepairDAO repairDAO = new RepairDAO();
 
     public MyMachinesPanelController(User user, ClientDashboardView view) {
