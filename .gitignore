@@ -1,3 +1,21 @@
-REDME.md
-src/main/resources/db.properties
+# Maven
 /target/
+dependency-reduced-pom.xml
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+buildNumber.properties
+
+# Java
+*.class
+*.log
+hs_err_pid*
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Custom user rules
+src/main/resources/db.properties
