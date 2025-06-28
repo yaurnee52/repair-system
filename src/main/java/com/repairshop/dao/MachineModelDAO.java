@@ -67,7 +67,6 @@ public class MachineModelDAO {
 
 
     public MachineModel findOrCreate(String brand, int year, String country) throws SQLException {
-        // Сначала ищем существующую модель
         String selectSql = "SELECT * FROM MachineModel WHERE brand = ? AND yearOfRelease = ? AND countryOfManufacture = ?";
         try (PreparedStatement selectStmt = conn.prepareStatement(selectSql)) {
             selectStmt.setString(1, brand);
@@ -83,8 +82,6 @@ public class MachineModelDAO {
                 );
             }
         }
-
-        // Если не нашли, создаем новую
         String insertSql = "INSERT INTO MachineModel (brand, yearOfRelease, countryOfManufacture) VALUES (?, ?, ?)";
         try (PreparedStatement insertStmt = conn.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
             insertStmt.setString(1, brand);
@@ -99,7 +96,6 @@ public class MachineModelDAO {
                 }
             }
         }
-
-        return null; // Если что-то пошло не так
+        return null;
     }
 }

@@ -55,7 +55,7 @@ public class MyMachinesPanelController {
 
         view.machines_table.getColumns().setAll(idCol, brandCol, yearCol, countryCol);
 
-        // --- Таблица ремонтов (добавляем колонку "Станок") ---
+        // --- Таблица ремонтов ---
         TableColumn<Repair, String> machineRepairCol = new TableColumn<>("Станок");
         machineRepairCol.setCellValueFactory(new PropertyValueFactoryForRepair("machine"));
         machineRepairCol.setSortable(false);

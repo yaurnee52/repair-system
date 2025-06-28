@@ -3,6 +3,7 @@ package com.repairshop.containers;
 import com.repairshop.dao.MachineDAO;
 import com.repairshop.model.Machine;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,8 +50,12 @@ public class Machines {
 
     public List<Machine> readByClientId(int clientId) {
         loadCache();
-        return machinesCache.stream()
-                .filter(machine -> machine.getClientId() == clientId)
-                .collect(Collectors.toList());
+        List<Machine> result = new ArrayList<>();
+        for (Machine machine : machinesCache) {
+            if (machine.getClientId() == clientId) {
+                result.add(machine);
+            }
+        }
+        return result;
     }
 } 

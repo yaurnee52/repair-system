@@ -16,9 +16,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class AdminPanelController {
     private final AdminDashboardView view;
@@ -44,8 +45,11 @@ public class AdminPanelController {
 
     private void loadClientData() {
         try {
-            this.clientCache = clientDAO.readAll().stream()
-                    .collect(Collectors.toMap(Client::getId, client -> client));
+            List<Client> allClients = clientDAO.readAll();
+            this.clientCache = new HashMap<>();
+            for (Client client : allClients) {
+                this.clientCache.put(client.getId(), client);
+            }
 
             Role clientRole = Roles.getInstance().readByName("Клиент");
             if (clientRole == null) {
@@ -53,9 +57,13 @@ public class AdminPanelController {
                 return;
             }
 
-            List<User> clientUsers = userDAO.readAll().stream()
-                    .filter(user -> user.getRoleId() == clientRole.getId())
-                    .collect(Collectors.toList());
+            List<User> allUsers = userDAO.readAll();
+            List<User> clientUsers = new ArrayList<>();
+            for (User user : allUsers) {
+                if (user.getRoleId() == clientRole.getId()) {
+                    clientUsers.add(user);
+                }
+            }
 
             view.clients_table.setItems(FXCollections.observableArrayList(clientUsers));
         } catch (Exception e) {

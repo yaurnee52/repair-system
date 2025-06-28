@@ -8,8 +8,8 @@ import javafx.stage.Stage;
 //Главный класс для запуска программы, создает окно и запускает контроллер логина
 public class MainApp extends Application {
 
-    private static final int WINDOW_WIDTH = 600;
-    private static final int WINDOW_HEIGHT = 500;
+    private static final int WINDOW_WIDTH = 500;
+    private static final int WINDOW_HEIGHT = 400;
     private static final String INITIAL_WINDOW_TITLE = "Ремонт станков";
     private static Stage primaryStage;
 
